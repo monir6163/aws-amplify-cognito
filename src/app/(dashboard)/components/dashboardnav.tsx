@@ -2,9 +2,14 @@
 
 import useAuthUser from "@/app/hooks/use-auth-user";
 import { cn } from "@/lib/utils";
+import {
+  CreditCard,
+  CreditCardIcon,
+  File,
+  LayoutDashboardIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Icons } from "./icon";
 
 export function DashboardNav() {
   const user = useAuthUser();
@@ -19,7 +24,7 @@ export function DashboardNav() {
             path === "/dashboard" && "bg-gray-100 text-gray-900"
           )}
         >
-          <Icons.dashboard className="w-6 h-6 mr-2" />
+          <LayoutDashboardIcon className="w-6 h-6 mr-2" />
           Dashboard
         </div>
       </Link>
@@ -32,7 +37,7 @@ export function DashboardNav() {
                 path === "/dashboard/payments" && "bg-gray-100 text-gray-900"
               )}
             >
-              <Icons.payment className="w-6 h-6 mr-2" />
+              <CreditCard className="w-6 h-6 mr-2" />
               Payments
             </div>
           </Link>
@@ -43,7 +48,7 @@ export function DashboardNav() {
                 path === "/dashboard/documents" && "bg-gray-100 text-gray-900"
               )}
             >
-              <Icons.page className="w-6 h-6 mr-2" />
+              <File className="w-6 h-6 mr-2" />
               Documents
             </div>
           </Link>
@@ -59,7 +64,7 @@ export function DashboardNav() {
                   "bg-gray-100 text-gray-900"
               )}
             >
-              <Icons.payment className="w-6 h-6 mr-2" />
+              <CreditCardIcon className="w-6 h-6 mr-2" />
               View All Payments
             </div>
           </Link>
@@ -71,7 +76,7 @@ export function DashboardNav() {
                   "bg-gray-100 text-gray-900"
               )}
             >
-              <Icons.page className="w-6 h-6 mr-2" />
+              <File className="w-6 h-6 mr-2" />
               View All Documents
             </div>
           </Link>
@@ -82,7 +87,7 @@ export function DashboardNav() {
                 path === "/dashboard/invoices" && "bg-gray-100 text-gray-900"
               )}
             >
-              <Icons.page className="w-6 h-6 mr-2" />
+              <File className="w-6 h-6 mr-2" />
               Invoices
             </div>
           </Link>

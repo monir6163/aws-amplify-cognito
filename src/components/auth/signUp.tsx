@@ -99,7 +99,11 @@ export default function SignUp() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g: ********" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="e.g: ********"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,7 +116,11 @@ export default function SignUp() {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g: ********" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="e.g: ********"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

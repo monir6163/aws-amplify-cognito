@@ -1,10 +1,13 @@
 import {
   autoSignIn,
   confirmSignUp,
+  confirmUserAttribute,
   resendSignUpCode,
   signIn,
   signOut,
   signUp,
+  updateUserAttribute,
+  type UpdateUserAttributeOutput,
 } from "aws-amplify/auth";
 import { getErrorMessage } from "../../utlis/get-error-message";
 // handle the user sign up
@@ -112,6 +115,68 @@ export const userSignIn = async (
   }
 };
 
+// update user profile
+export async function handleUpdateUserAttribute(formData: FormData) {
+  const attributesToUpdate: { attributeKey: string; value: string }[] = [];
+  if (formData.get("name")) {
+    const name = String(formData.get("name"));
+    const currentName = String(formData.get("current_name") || "");
+    if (name !== currentName) {
+      attributesToUpdate.push({ attributeKey: "name", value: name });
+    }
+  }
+
+  if (formData.get("email")) {
+    const email = String(formData.get("email"));
+    const currentEmail = String(formData.get("current_email") || "");
+    if (email !== currentEmail) {
+      attributesToUpdate.push({ attributeKey: "email", value: email });
+    }
+  }
+
+  if (formData.get("phone_number")) {
+    const phoneNumber = String(formData.get("phone_number"));
+    const currentPhoneNumber = String(
+      formData.get("current_phone_number") || ""
+    );
+    if (phoneNumber !== currentPhoneNumber) {
+      attributesToUpdate.push({
+        attributeKey: "phone_number",
+        value: phoneNumber,
+      });
+    }
+  }
+
+  if (attributesToUpdate.length === 0) {
+    return "No changes detected.";
+  }
+
+  try {
+    const responses = await Promise.all(
+      attributesToUpdate.map(async (attr) => {
+        const output = await updateUserAttribute({
+          userAttribute: attr,
+        });
+        return handleUpdateUserAttributeNextSteps(output);
+      })
+    );
+    return responses;
+  } catch (error) {
+    console.error("Update failed:", error);
+    return getErrorMessage(error);
+  }
+}
+
+function handleUpdateUserAttributeNextSteps(output: UpdateUserAttributeOutput) {
+  const { nextStep } = output;
+
+  switch (nextStep.updateAttributeStep) {
+    case "CONFIRM_ATTRIBUTE_WITH_CODE":
+      return `Confirmation code was sent to ${nextStep.codeDeliveryDetails?.destination}.`;
+    case "DONE":
+      return "success";
+  }
+}
 // handle the user sign out
 export const userSignOut = async () => {
   try {
@@ -119,6 +184,24 @@ export const userSignOut = async () => {
     return {
       status: "success",
       message: "Sign out successful",
+    };
+  } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    return errorMessage;
+  }
+};
+
+// after email change confirmation
+export const handleConfirmUserAttribute = async (formData: FormData) => {
+  try {
+    const code = formData.get("confirmationCode") as string;
+    await confirmUserAttribute({
+      userAttributeKey: "email",
+      confirmationCode: String(code),
+    });
+    return {
+      status: "success",
+      message: "Email change successful",
     };
   } catch (error) {
     const errorMessage = getErrorMessage(error);

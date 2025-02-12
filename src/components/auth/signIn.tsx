@@ -81,7 +81,11 @@ export default function SignIn() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g: ********" {...field} />
+                    <Input
+                      type="password"
+                      placeholder="e.g: ********"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

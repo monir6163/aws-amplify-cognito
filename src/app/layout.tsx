@@ -20,7 +20,12 @@ export default function RootLayout({
         <>
           <ConfigureAmplifyClientSide />
           {children}
-          <Toaster richColors closeButton position="top-center" />
+          <Toaster
+            richColors
+            closeButton
+            position="top-center"
+            duration={2000}
+          />
         </>
       </body>
     </html>
