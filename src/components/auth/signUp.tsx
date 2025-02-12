@@ -8,27 +8,49 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { userSignUp } from "@/lib/actions/cognitoActions";
 import {
   formDefaultValues,
   signUpSchema,
   SignUpSchema,
-} from "@/lib/zod/signUp";
+} from "@/lib/zod/auth/signUp";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Fragment } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { getErrorMessage } from "../../utlis/get-error-message";
 import ButtonLoader from "../button-loader";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 export default function SignUp() {
+  const { push } = useRouter();
   const form = useForm<SignUpSchema>({
     mode: "all",
     resolver: zodResolver(signUpSchema),
     defaultValues: formDefaultValues,
   });
   async function onSubmit(values: SignUpSchema) {
-    console.log(values);
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+    formData.append("confirmPassword", values.confirmPassword);
+    try {
+      const res = await userSignUp(formData);
+      if (typeof res !== "string" && res?.status === "success" && res?.userId) {
+        toast.success(res.message);
+        sessionStorage.setItem("email", values.email);
+        push("/confirm-signup");
+      } else {
+        toast.error(typeof res === "string" ? res : res.message);
+      }
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage);
+    }
   }
   return (
     <Fragment>
@@ -110,7 +132,7 @@ export default function SignUp() {
           <p>
             Already have an account?{" "}
             <Link
-              href="/signin"
+              href="/"
               className="text-blue-500 underline hover:text-blue-700"
             >
               Sign In
