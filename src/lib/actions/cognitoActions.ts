@@ -6,6 +6,7 @@ import {
   signIn,
   signOut,
   signUp,
+  updatePassword,
   updateUserAttribute,
   type UpdateUserAttributeOutput,
 } from "aws-amplify/auth";
@@ -202,6 +203,35 @@ export const handleConfirmUserAttribute = async (formData: FormData) => {
     return {
       status: "success",
       message: "Email change successful",
+    };
+  } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    return errorMessage;
+  }
+};
+
+// after phone number change confirmation (not implemented)
+
+// password reset (not implemented)
+
+// password change
+export const handlePasswordChange = async (formData: FormData) => {
+  try {
+    const currentPassword = formData.get("current_password") as string;
+    const newPassword = formData.get("password") as string;
+    if (currentPassword === newPassword) {
+      return {
+        status: "error",
+        message: "New password must be different from the current password",
+      };
+    }
+    await updatePassword({
+      oldPassword: currentPassword,
+      newPassword: newPassword,
+    });
+    return {
+      status: "success",
+      message: "Password change successful",
     };
   } catch (error) {
     const errorMessage = getErrorMessage(error);

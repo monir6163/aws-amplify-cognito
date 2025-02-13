@@ -23,7 +23,7 @@ import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export default function CodeUpdate() {
+export default function CodeUpdate({ onSuccess }: { onSuccess: () => void }) {
   const form = useForm<CodeSchema>({
     mode: "all",
     resolver: zodResolver(codeSchema),
@@ -33,11 +33,12 @@ export default function CodeUpdate() {
   async function onSubmit(values: CodeSchema) {
     const formData = new FormData();
     formData.append("confirmationCode", values.code);
+
     try {
       const res = await handleConfirmUserAttribute(formData);
       if (typeof res !== "string" && res?.status === "success") {
         toast.success(res.message);
-        sessionStorage.removeItem("code");
+        onSuccess(); // Hide code form and show email form
       } else {
         toast.error(typeof res === "string" ? res : res.message);
       }
@@ -45,6 +46,7 @@ export default function CodeUpdate() {
       toast.error(getErrorMessage(error));
     }
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

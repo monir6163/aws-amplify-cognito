@@ -69,7 +69,7 @@ export function UserNav() {
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
           </Link>
-          <Link href="/dashboard/password">
+          <Link href="/dashboard/profile/password">
             <DropdownMenuItem className="cursor-pointer">
               Change Password
               <DropdownMenuShortcut>⇧⌘C</DropdownMenuShortcut>

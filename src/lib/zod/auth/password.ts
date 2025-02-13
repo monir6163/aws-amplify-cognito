@@ -1,9 +1,8 @@
 import { z } from "zod";
 
-const signUpSchema = z
+const passwordSchema = z
   .object({
-    name: z.string().nonempty("Name is required"),
-    email: z.string().nonempty("Email is required").email("Invalid email"),
+    current_password: z.string().nonempty("Current password is required"),
     password: z
       .string()
       .nonempty("Password is required")
@@ -18,13 +17,12 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
-type SignUpSchema = z.infer<typeof signUpSchema>;
+type PasswordSchema = z.infer<typeof passwordSchema>;
 
-const formDefaultValues: SignUpSchema = {
-  name: "",
-  email: "",
+const formDefaultValues: PasswordSchema = {
+  current_password: "",
   password: "",
   confirmPassword: "",
-};
+} as PasswordSchema;
 
-export { formDefaultValues, signUpSchema, type SignUpSchema };
+export { formDefaultValues, passwordSchema, type PasswordSchema };

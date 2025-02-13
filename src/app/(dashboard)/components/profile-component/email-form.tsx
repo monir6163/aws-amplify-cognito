@@ -37,7 +37,6 @@ export default function EmailUpdate() {
   useEffect(() => {
     if (user) {
       form.setValue("email", user.email);
-      sessionStorage.getItem("code") && setCode(sessionStorage.getItem("code"));
     }
   }, [user, form]);
 
@@ -48,10 +47,9 @@ export default function EmailUpdate() {
 
     try {
       const response = await handleUpdateUserAttribute(formData);
-
-      if (response.includes("success")) {
+      if (response && response[0]) {
         toast.success("Email updated successfully!");
-        sessionStorage.setItem("code", String(response[0]));
+        setCode(response[0]); // Show code form
       } else {
         toast.error(response);
       }
@@ -59,16 +57,16 @@ export default function EmailUpdate() {
       toast.error(getErrorMessage(error));
     }
   }
+
   return (
     <div className="space-y-4 border rounded-lg p-4">
-      <div>
-        <h1 className="text-2xl font-semibold">Update Email</h1>
-      </div>
-      {code && <CodeUpdate />}
-      {!code && (
+      <h1 className="text-2xl font-semibold">Update Email</h1>
+
+      {code ? (
+        <CodeUpdate onSuccess={() => setCode(null)} />
+      ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            {/* Name Input Field */}
             <FormField
               control={form.control}
               name="email"
@@ -88,11 +86,7 @@ export default function EmailUpdate() {
               className="w-full inline-flex items-center"
               type="submit"
             >
-              {form.formState.isSubmitting ? (
-                <ButtonLoader />
-              ) : (
-                "Update Profile"
-              )}
+              {form.formState.isSubmitting ? <ButtonLoader /> : "Update Email"}
             </Button>
           </form>
         </Form>
