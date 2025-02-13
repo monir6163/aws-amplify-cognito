@@ -6,7 +6,6 @@ This project demonstrates how to implement authentication using **AWS Cognito** 
 
 - **SignUp**: Users can create a new account with email and password.
 - **SignIn**: Existing users can log in using their credentials.
-- **GitHub Login**: Users can log in using their GitHub account (OAuth integration).
 - **Profile Data Update**: Authenticated users can update their profile information.
 - **Email Change with Verification**: Users can change their email address, with a verification step to confirm the new email.
 - **Password Change**: Users can update their password securely.
@@ -19,7 +18,6 @@ This project demonstrates how to implement authentication using **AWS Cognito** 
 - **AWS Cognito**: A scalable user directory and authentication service.
 - **App Router**: Next.js's file-based routing system.
 - **Server Actions**: Next.js feature for handling server-side logic.
-- **OAuth**: For GitHub login integration.
 - **Tailwind CSS** (optional): For styling the application.
 
 ## Getting Started

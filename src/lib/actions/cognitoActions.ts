@@ -12,6 +12,7 @@ import {
   updateUserAttribute,
   type UpdateUserAttributeOutput,
 } from "aws-amplify/auth";
+
 import { getErrorMessage } from "../../utlis/get-error-message";
 // handle the user sign up
 export const userSignUp = async (formData: FormData) => {
