@@ -1,6 +1,7 @@
 "use client";
 
 import ButtonLoader from "@/components/button-loader";
+import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,7 +11,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { handlePasswordChange } from "@/lib/actions/cognitoActions";
 import {
   formDefaultValues,
@@ -67,7 +67,7 @@ export default function PasswordForm() {
               <FormItem>
                 <FormLabel>Current Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g: *******" {...field} />
+                  <PasswordInput placeholder="e.g: ********" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -81,7 +81,7 @@ export default function PasswordForm() {
               <FormItem>
                 <FormLabel>New Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g: *******" {...field} />
+                  <PasswordInput placeholder="e.g: ********" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -95,7 +95,7 @@ export default function PasswordForm() {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g: *******" {...field} />
+                  <PasswordInput placeholder="e.g: ********" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

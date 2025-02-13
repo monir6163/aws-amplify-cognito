@@ -8,69 +8,51 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { handleConfirmResetPassword } from "@/lib/actions/cognitoActions";
+
 import {
-  handleConfirmSignUp,
-  sendEmailVerificationCode,
-} from "@/lib/actions/cognitoActions";
-import {
-  confirmSignUpSchema,
-  ConfirmSignUpSchema,
   formDefaultValues,
-} from "@/lib/zod/auth/confirmSignUp";
+  resetPasswordSchema,
+  ResetPasswordSchema,
+} from "@/lib/zod/auth/reset-password";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { getErrorMessage } from "../../utlis/get-error-message";
 import ButtonLoader from "../button-loader";
+import { PasswordInput } from "../password-input";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
-import { Separator } from "../ui/separator";
 
-export default function EmailVerify() {
+export default function ResetConfirm() {
   const { push } = useRouter();
-  const [isConfirmLoading, setIsConfirmLoading] = useState(false);
-  const [isResendLoading, setIsResendLoading] = useState(false);
-  const [resendDisabled, setResendDisabled] = useState(true);
-  const [countdown, setCountdown] = useState(30); // 30 seconds
-
-  const form = useForm<ConfirmSignUpSchema>({
+  const form = useForm<ResetPasswordSchema>({
     mode: "all",
-    resolver: zodResolver(confirmSignUpSchema),
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: formDefaultValues,
   });
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("email");
     if (!storedEmail) {
-      push("/signup");
+      push("/");
     } else {
       form.setValue("email", storedEmail);
     }
   }, [push, form]);
 
-  useEffect(() => {
-    if (resendDisabled && countdown > 0) {
-      const timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    } else {
-      setResendDisabled(false);
-    }
-  }, [countdown, resendDisabled]);
-
-  async function onSubmit(values: ConfirmSignUpSchema) {
-    setIsConfirmLoading(true);
+  async function onSubmit(values: ResetPasswordSchema) {
+    const formData = new FormData();
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+    formData.append("confirmPassword", values.confirmPassword);
+    formData.append("confirmationCode", values.confirmationCode);
     try {
-      const formData = new FormData();
-      formData.append("email", values.email);
-      formData.append("confirmationCode", values.confirmationCode);
-      const res = await handleConfirmSignUp(formData);
+      const res = await handleConfirmResetPassword(formData);
       if (typeof res !== "string" && res?.status === "success") {
         toast.success(res.message);
         // clear the email from session storage
@@ -80,38 +62,17 @@ export default function EmailVerify() {
         toast.error(typeof res === "string" ? res : res.message);
       }
     } catch (error) {
-      toast.error(getErrorMessage(error));
-    } finally {
-      setIsConfirmLoading(false);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage);
     }
   }
-
-  // Resend confirmation code
-  async function handleResendCode() {
-    setIsResendLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("email", form.getValues("email"));
-      const res = await sendEmailVerificationCode(formData);
-      if (typeof res !== "string" && res?.status === "success") {
-        toast.success(res.message);
-        setCountdown(30);
-        setResendDisabled(true);
-      } else {
-        toast.error(typeof res === "string" ? res : res.message);
-      }
-    } catch (error) {
-      toast.error(getErrorMessage(error));
-    } finally {
-      setIsResendLoading(false);
-    }
-  }
-
   return (
     <Fragment>
       <div className="space-y-4 border rounded-lg p-4">
-        <div>
-          <h1 className="text-2xl font-semibold">Confirm Your Email Address</h1>
+        <div className="text-center">
+          <h1 className="text-2xl font-semibold">
+            Confirm your email and set a new password
+          </h1>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -123,16 +84,15 @@ export default function EmailVerify() {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
+                      disabled
                       placeholder="e.g: monirhossain6163@gmail.com"
                       {...field}
-                      disabled
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="confirmationCode"
@@ -164,45 +124,45 @@ export default function EmailVerify() {
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <PasswordInput placeholder="e.g: ********" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <PasswordInput placeholder="e.g: ********" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button
-              disabled={isConfirmLoading}
+              disabled={form.formState.isSubmitting}
               className="w-full inline-flex items-center"
               type="submit"
             >
-              {isConfirmLoading ? <ButtonLoader /> : "Confirm"}
-            </Button>
-
-            <Separator orientation="horizontal" className="my-4" />
-
-            <Button
-              disabled={resendDisabled || isResendLoading}
-              className="w-full inline-flex items-center"
-              type="button"
-              onClick={handleResendCode}
-            >
-              {isResendLoading ? (
+              {form.formState.isSubmitting ? (
                 <ButtonLoader />
-              ) : resendDisabled ? (
-                `Resend Code (${countdown}s)`
               ) : (
-                "Resend Code"
+                "Reset Password"
               )}
             </Button>
           </form>
         </Form>
-
-        <div>
-          <p>
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/signup"
-              className="text-blue-500 underline hover:text-blue-700"
-            >
-              Sign Up
-            </Link>
-          </p>
-        </div>
       </div>
     </Fragment>
   );

@@ -1,8 +1,10 @@
 import {
   autoSignIn,
+  confirmResetPassword,
   confirmSignUp,
   confirmUserAttribute,
   resendSignUpCode,
+  resetPassword,
   signIn,
   signOut,
   signUp,
@@ -163,7 +165,6 @@ export async function handleUpdateUserAttribute(formData: FormData) {
     );
     return responses;
   } catch (error) {
-    console.error("Update failed:", error);
     return getErrorMessage(error);
   }
 }
@@ -212,7 +213,45 @@ export const handleConfirmUserAttribute = async (formData: FormData) => {
 
 // after phone number change confirmation (not implemented)
 
-// password reset (not implemented)
+// password reset
+export const handlePasswordReset = async (formData: FormData) => {
+  try {
+    const email = formData.get("email") as string;
+    // check email exists in the user pool
+    // const userCheck = await checkIfUserExists(email);
+    // if (userCheck.status === "error") {
+    //   return userCheck.message; // User not found
+    // }
+    await resetPassword({
+      username: email,
+    });
+    return {
+      status: "success",
+      message: "Password reset successful",
+    };
+  } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    return errorMessage;
+  }
+};
+
+// after password reset confirmation
+export const handleConfirmResetPassword = async (formData: FormData) => {
+  try {
+    await confirmResetPassword({
+      username: String(formData.get("email")),
+      confirmationCode: String(formData.get("confirmationCode")),
+      newPassword: String(formData.get("password")),
+    });
+    return {
+      status: "success",
+      message: "Password change successful",
+    };
+  } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    return errorMessage;
+  }
+};
 
 // password change
 export const handlePasswordChange = async (formData: FormData) => {

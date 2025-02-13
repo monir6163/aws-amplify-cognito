@@ -26,7 +26,7 @@ export async function authenticatedUser(context: NextServer.Context) {
         user.isAdmin = Boolean(groups && groups.includes("Admins"));
         return user;
       } catch (error) {
-        console.log(error);
+        return error;
       }
     },
   });
