@@ -5,15 +5,17 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { TableDemo } from "./todosTable";
 
-axios.defaults.withCredentials = true;
-
-async function featchAllTodos() {
+async function featchAllTodos(idToken: string) {
   try {
-    const response = await axios.get(
-      "https://rjw2w5oiq7.execute-api.us-east-1.amazonaws.com/dev/todos"
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/todos`,
+      {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      }
     );
-    console.log(response.data);
-    return response.data;
+    return data;
   } catch (error) {}
 }
 
@@ -24,7 +26,7 @@ export default function AllTasks() {
   useEffect(() => {
     setLoading(true);
     if (user) {
-      featchAllTodos().then((data) => {
+      featchAllTodos(user.idToken).then((data) => {
         setTodos(data);
         setLoading(false);
       });
