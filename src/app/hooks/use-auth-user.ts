@@ -14,10 +14,14 @@ export default function useAuthUser() {
       if (!session.tokens) {
         return;
       }
+      const idToken = session.tokens?.idToken
+        ? session.tokens.idToken.toString()
+        : "";
       const user = {
         ...(await getCurrentUser()),
         ...(await fetchUserAttributes()),
         isAdmin: false,
+        idToken,
       };
       const groups = session.tokens.accessToken.payload["cognito:groups"];
       // @ts-ignore
