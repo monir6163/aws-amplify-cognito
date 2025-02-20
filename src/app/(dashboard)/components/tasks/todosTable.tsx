@@ -17,7 +17,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { DialogDemo } from "./todosModal";
 
-export function TableDemo({ todosData }: any) {
+export function TableDemo({ todosData = [] }: { todosData: any[] }) {
   const [open, setOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -92,52 +92,56 @@ export function TableDemo({ todosData }: any) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {todosData?.map((todo: any, i: number) => (
-            <TableRow key={i}>
-              <TableCell>{i + 1}</TableCell>
-              <TableCell className="font-medium text-clip w-2/4">
-                {todo?.title}
-              </TableCell>
-              <TableCell>
-                {todo?.status === "pending" ? "Pending" : "Completed"}
-              </TableCell>
-              <TableCell className="w-[200px]">
-                {formatDistance(
-                  subDays(new Date(todo?.createdAt), 0),
-                  new Date(),
-                  {
-                    addSuffix: true,
-                  }
-                )}
-              </TableCell>
-              <TableCell className="w-[200px]">
-                {formatDistance(
-                  subDays(new Date(todo?.updatedAt), 0),
-                  new Date(),
-                  {
-                    addSuffix: true,
-                  }
-                )}
-              </TableCell>
-              <TableCell className="text-right flex justify-end space-x-2">
-                <Button variant="outline">
-                  <Eye size={16} className="text-green-500" />
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setOpen(true);
-                    setSelectedTodo(todo);
-                  }}
-                >
-                  <Pencil size={16} className="text-yellow-500" />
-                </Button>
-                <Button variant="outline" onClick={() => deleteTodos(todo?.id)}>
-                  <Trash size={16} className="text-red-500" />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+          {Array.isArray(todosData) &&
+            todosData?.map((todo: any, i: number) => (
+              <TableRow key={i}>
+                <TableCell>{i + 1}</TableCell>
+                <TableCell className="font-medium text-clip w-2/4">
+                  {todo?.title}
+                </TableCell>
+                <TableCell>
+                  {todo?.status === "pending" ? "Pending" : "Completed"}
+                </TableCell>
+                <TableCell className="w-[200px]">
+                  {formatDistance(
+                    subDays(new Date(todo?.createdAt), 0),
+                    new Date(),
+                    {
+                      addSuffix: true,
+                    }
+                  )}
+                </TableCell>
+                <TableCell className="w-[200px]">
+                  {formatDistance(
+                    subDays(new Date(todo?.updatedAt), 0),
+                    new Date(),
+                    {
+                      addSuffix: true,
+                    }
+                  )}
+                </TableCell>
+                <TableCell className="text-right flex justify-end space-x-2">
+                  <Button variant="outline">
+                    <Eye size={16} className="text-green-500" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setOpen(true);
+                      setSelectedTodo(todo);
+                    }}
+                  >
+                    <Pencil size={16} className="text-yellow-500" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => deleteTodos(todo?.id)}
+                  >
+                    <Trash size={16} className="text-red-500" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
 
