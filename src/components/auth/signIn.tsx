@@ -39,7 +39,6 @@ export default function SignIn() {
     formData.append("password", values.password);
     try {
       const res = await userSignIn(undefined, formData);
-      console.log("res", res);
       if (typeof res !== "string" && res?.status === "success") {
         toast.success(res.message);
         push("/dashboard");
