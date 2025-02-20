@@ -47,9 +47,12 @@ export default function EmailUpdate() {
 
     try {
       const response = await handleUpdateUserAttribute(formData);
-      if (response && response[0]) {
-        toast.success("Email updated successfully!");
-        setCode(response[0]); // Show code form
+      console.log("response", response);
+      if (response === "No changes detected.") {
+        toast.error(response);
+      } else if (Array.isArray(response)) {
+        setCode(values.email);
+        toast.success("Confirmation code sent to your email.");
       } else {
         toast.error(response);
       }

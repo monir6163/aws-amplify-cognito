@@ -38,7 +38,7 @@ export default function CodeUpdate({ onSuccess }: { onSuccess: () => void }) {
       const res = await handleConfirmUserAttribute(formData);
       if (typeof res !== "string" && res?.status === "success") {
         toast.success(res.message);
-        onSuccess(); // Hide code form and show email form
+        onSuccess();
       } else {
         toast.error(typeof res === "string" ? res : res.message);
       }

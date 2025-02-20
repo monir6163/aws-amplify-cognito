@@ -31,7 +31,7 @@ export function DashboardNav() {
           )}
         >
           <CreditCard className="w-6 h-6 mr-2" />
-          Tasks
+          Todos
         </div>
       </Link>
       {user?.isAdmin === true && (

@@ -15,6 +15,29 @@ import {
 
 import { getErrorMessage } from "../../utlis/get-error-message";
 
+import {
+  AdminGetUserCommand,
+  CognitoIdentityProviderClient,
+} from "@aws-sdk/client-cognito-identity-provider";
+
+const client = new CognitoIdentityProviderClient({
+  region: process.env.NEXT_PUBLIC_COGNITO_REGION,
+  credentials: {
+    accessKeyId: process.env.NEXT_PUBLIC_COGNITO_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.NEXT_PUBLIC_COGNITO_SECRET_ACCESS_KEY!,
+  },
+});
+
+export const getUser = async (email: string) => {
+  const command = new AdminGetUserCommand({
+    UserPoolId: process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID,
+    Username: email,
+  });
+
+  const response = await client.send(command);
+  return response;
+};
+
 // handle the user sign up
 export const userSignUp = async (formData: FormData) => {
   try {
@@ -101,6 +124,8 @@ export const userSignIn = async (
   try {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const user = await getUser(email);
+
     const { nextStep } = await signIn({
       username: email,
       password: password,
@@ -153,7 +178,7 @@ export async function handleUpdateUserAttribute(formData: FormData) {
   }
 
   if (attributesToUpdate.length === 0) {
-    return "No changes detected.";
+    // return "No changes detected.";
   }
 
   try {
