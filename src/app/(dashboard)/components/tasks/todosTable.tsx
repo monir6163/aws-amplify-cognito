@@ -100,9 +100,17 @@ export function TableDemo({ todosData = [] }: { todosData: any[] }) {
                   {todo?.title}
                 </TableCell>
                 <TableCell>
-                  {todo?.status === "pending" ? "Pending" : "Completed"}
+                  {todo?.status === "pending" ? (
+                    <span className="bg-yellow-500 text-white px-2 py-1 rounded-md">
+                      Pending
+                    </span>
+                  ) : (
+                    <span className="bg-green-500 text-white px-2 py-1 rounded-md">
+                      Completed
+                    </span>
+                  )}
                 </TableCell>
-                <TableCell className="w-[200px]">
+                <TableCell>
                   {formatDistance(
                     subDays(new Date(todo?.createdAt), 0),
                     new Date(),
@@ -111,7 +119,7 @@ export function TableDemo({ todosData = [] }: { todosData: any[] }) {
                     }
                   )}
                 </TableCell>
-                <TableCell className="w-[200px]">
+                <TableCell>
                   {formatDistance(
                     subDays(new Date(todo?.updatedAt), 0),
                     new Date(),
